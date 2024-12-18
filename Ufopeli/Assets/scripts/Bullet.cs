@@ -1,40 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 public class Bullet : MonoBehaviour
 {
-    public float bulletLife = 1f;  // Defines how long before the bullet is destroyed
-    public float rotation = 0f;
-    public float speed = 1f;
+    public float life = 3;
 
-
-    private Vector2 spawnPoint;
-    private float timer = 0f;
-
-
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        spawnPoint = new Vector2(transform.position.x, transform.position.y);
+        Destroy(gameObject, life);
     }
 
-
-    // Update is called once per frame
-    void Update()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (timer > bulletLife) Destroy(this.gameObject);
-        timer += Time.deltaTime;
-        transform.position = Movement(timer);
-    }
-
-
-    private Vector2 Movement(float timer)
-    {
-        // Moves right according to the bullet's rotation
-        float x = timer * speed * transform.right.x;
-        float y = timer * speed * transform.right.y;
-        return new Vector2(x + spawnPoint.x, y + spawnPoint.y);
+       
+        Destroy(collision.gameObject);
+        Destroy(gameObject);
     }
 }

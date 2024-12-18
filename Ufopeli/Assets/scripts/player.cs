@@ -1,14 +1,30 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField]
+    private float speed;
 
-    // Add an impulse which produces a change in angular velocity (specified in degrees).
-    public void AddTorqueImpulse(float angularChangeInDegrees)
+    [SerializeField]
+    private float rotationSpeed;
+
+    void Update()
     {
-        var body = GetComponent<Rigidbody2D>();
-        var impulse = (angularChangeInDegrees * Mathf.Deg2Rad) * body.inertia;
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
 
-        body.AddTorque(impulse, ForceMode2D.Impulse);
+        Vector2 movementDirection = new Vector2(horizontalInput, verticalInput);
+        float inputMagnitude = Mathf.Clamp01(movementDirection.magnitude);
+        movementDirection.Normalize();
+
+        transform.Translate(movementDirection * speed * inputMagnitude * Time.deltaTime, Space.World);
+
+        if (movementDirection != Vector2.zero)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(Vector3.forward, movementDirection);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
     }
 }
